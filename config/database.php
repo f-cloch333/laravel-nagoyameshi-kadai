@@ -2,8 +2,6 @@
 
 use Illuminate\Support\Str;
 
-$db = parse_url(env('mysql://nd2t54c21mynhpci:t6729vnn01mjyg54@un0jueuv2mam78uv.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/yw7thr6pfaq2h8ge'));
-
 return [
 
     /*
