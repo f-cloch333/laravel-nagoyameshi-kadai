@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
-use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,16 +19,7 @@ Route::get('/', function () {
 
 require __DIR__.'/auth.php';
 
-
-
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
-    Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
-  });
-
-  Route::prefix('admin')->name('admin.')->middleware('auth', 'can:admin')->group(function () {
-    // 会員一覧ページ
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    
-    // 会員詳細ページ
-    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function() {
+  Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
+  Route::resource('users', Admin\UserController::class)->only(['index', 'show']);
 });
