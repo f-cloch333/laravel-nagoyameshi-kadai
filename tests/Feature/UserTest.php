@@ -2,102 +2,72 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase;
+   use RefreshDatabase;
 
-    /**
-     * 未ログインのユーザーは管理者側の会員一覧ページにアクセスできない
-     *
-     * @return void
-     */
-    public function test_guest_user_cannot_access_admin_users_index()
+   public function test_guest_cannot_access_admin_users_index(): void
     {
-        $response = $this->get(route('admin.users.index'));
+        $response = $this->get('/admin/users');
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect('/admin/login');
     }
 
-    /**
-     * ログイン済みの一般ユーザーは管理者側の会員一覧ページにアクセスできない
-     *
-     * @return void
-     */
-    public function test_regular_user_cannot_access_admin_users_index()
+    public function test_logged_in_user_cannot_access_users_index(): void
     {
-        $user = User::factory()->create(); // 一般ユーザーを作成
+        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.users.index'));
+        $response = $this->actingAs($user)->get('/admin/users');
 
-        $response->assertForbidden(); // アクセス禁止
+        $response->assertRedirect('/admin/login');
     }
 
-    /**
-     * ログイン済みの管理者は管理者側の会員一覧ページにアクセスできる
-     *
-     * @return void
-     */
-    public function test_admin_user_can_access_admin_users_index()
+    public function test_admin_can_access_users_index(): void
     {
-        $admin = User::factory()->create([
-            'is_admin' => true, // 管理者フラグ
-        ]);
+        $admin = new Admin();
+        $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
 
-        $response = $this->actingAs($admin)->get(route('admin.users.index'));
+        $response = $this->actingAs($admin, 'admin')->get('/admin/users/');
 
-        $response->assertOk(); // アクセス成功
+        $response->assertStatus(200);
     }
 
-    /**
-     * 未ログインのユーザーは管理者側の会員詳細ページにアクセスできない
-     *
-     * @return void
-     */
-    public function test_guest_user_cannot_access_admin_users_show()
+    public function test_guest_cannot_access_user_detail_page(): void
     {
-        $user = User::factory()->create(); // ダミーユーザー
+        $response = $this->get('/admin/users/1');
 
-        $response = $this->get(route('admin.users.show', $user->id));
-
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect('/admin/login');
     }
 
-    /**
-     * ログイン済みの一般ユーザーは管理者側の会員詳細ページにアクセスできない
-     *
-     * @return void
-     */
-    public function test_regular_user_cannot_access_admin_users_show()
+    public function test_logged_in_user_cannot_access_user_detail_page(): void
     {
-        $user = User::factory()->create(); // 一般ユーザーを作成
-        $targetUser = User::factory()->create(); // 詳細を表示するユーザー
+        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.users.show', $targetUser->id));
+        $response = $this->actingAs($user)->get("/admin/users/{$user->id}");
 
-        $response->assertForbidden(); // アクセス禁止
+        $response->assertRedirect('/admin/login');
     }
 
-    /**
-     * ログイン済みの管理者は管理者側の会員詳細ページにアクセスできる
-     *
-     * @return void
-     */
-    public function test_admin_user_can_access_admin_users_show()
+    public function test_admin_can_access_admin_user_show(): void
     {
-        $admin = User::factory()->create([
-            'is_admin' => true, // 管理者フラグ
-        ]);
+        $admin = new Admin();
+        $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
 
-        $targetUser = User::factory()->create(); // 詳細を表示するユーザー
+        $user = User::factory()->create();
 
-        $response = $this->actingAs($admin)->get(route('admin.users.show', $targetUser->id));
+        $response = $this->actingAs($admin, 'admin')->get("/admin/users/{$user->id}");
 
-        $response->assertOk(); // アクセス成功
+        $response->assertStatus(200);
     }
 }
