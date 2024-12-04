@@ -17,15 +17,18 @@ class UserSeeder extends Seeder
     {
         User::factory()->count(100)->create();
 
-         $user = new User();
-         $user->name = "田中太郎";
-         $user->kana = "タナカタロウ";
-         $user->email = 'tarou1204@example.com';
-         $user->email_verified_at = Carbon::now();
-         $user->password = Hash::make('password');
-         $user->postal_code = "101-0022";
-         $user->address = "東京都";
-         $user->phone_number = "090-5554-1118";
-         $user->save();
+                // 一般会員のアカウントを作成
+                User::create([
+                    'name' => '一般ユーザー',
+                    'email' => 'user@example.com',
+                    'password' => Hash::make('password123'), // パスワードはハッシュ化
+                    'postal_code' => '1234567',
+                    'address' => '東京都',
+                    'phone_number' => '08012345678',
+                    'birthday' => '1990-01-01',
+                    'occupation' => '会社員',
+                ]);
+            
+
     }
 }
