@@ -15,7 +15,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->count(100)->create();
+       // 100人のユーザーを作成しない
+    // User::factory()->count(100)->create();
+
+    // 1人のユーザーを作成
 
         User::create([
         'name' => '山田',
