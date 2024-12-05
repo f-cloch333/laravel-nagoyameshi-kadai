@@ -20,7 +20,7 @@ public function run(): void
         $admin->save();
 
     // 課題閲覧用管理者アカウント
-        $asmin2 = new Admin();
+        $admin2 = new Admin();
         $admin2->email = 'admin2@example.com';
         $admin2->password = Hash::make('nagoyameshi2');
         $admin2->save();
