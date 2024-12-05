@@ -21,7 +21,7 @@ public function run(): void
 
     // 課題閲覧用管理者アカウント
         $asmin = new Admin();
-        $admin->email = 'adomi2@example.com';
+        $admin->email = 'admin2@example.com';
         $admin->password = Hash::make('nagoyameshi2');
         $admin->save();
     }
